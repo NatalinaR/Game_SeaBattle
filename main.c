@@ -1,20 +1,8 @@
 #include <stdio.h>
-#include <locale.h>
 
 int main() {
-    // setlocale( LC_ALL, NULL );
-
-    int row_count;
-    int col_count;
-    printf("Enter the number of lines in the field: ");
-    scanf("%d", &row_count);
-    printf("Enter the number of columns in the field: ");
-    scanf("%d", &col_count);
-
-
-
-    // int row_count = 7;
-    // int col_count = 7;
+    int row_count = 7;
+    int col_count = 7;
 
     int rows = row_count; 
     int cols = col_count + 1; 
@@ -23,21 +11,21 @@ int main() {
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     for (int i = 0; i < 1; i++) {
-        // ?????????�???????�?????????? ??????????
-        printf("???");
+        // Горизонтальные линии
+        printf("┌");
         for (int j = 0; j < cols - 1; j++) {
-            printf("????????????");
+            printf("───┬");
         }
-        printf("????????????"); 
+        printf("───┐"); 
         printf("\n");
 
-        //?????????????�?????????? ??????????
-        printf("???");
+        //вертикальные линии
+        printf("│");
         for (int j = 0; j < cols; j++) {
             if (j > 0) {
-                printf(" %s ???", letters[j-1]);
+                printf(" %s │", letters[j-1]);
             }
-            else {printf("   ???");}
+            else {printf("   │");}
 
         }
         printf("\n");
@@ -46,26 +34,26 @@ int main() {
     }
 
     for (int i = 0; i < rows; i++) {
-        // ?????????�???????�?????????? ??????????
-        printf("???");
+        // Горизонтальные линии
+        printf("├");
         for (int j = 0; j < cols; j++) {
-            if (j == cols - 1) {printf("???????????�");}
-            else {printf("????????????");}
+            if (j == cols - 1) {printf("───┤");}
+            else {printf("───┼");}
         }
         printf("\n");
 
-        // ?????????????�?????????? ???�?�????????????????
-        printf("???");
+        // Вертикальные разделители
+        printf("│");
         for (int j = 0; j < cols; j++) {
 
             if (j < 1)
             {
-            	if (numbers[i] == 10 ){printf(" %d???", numbers[i]);}
-            	else {printf(" %d ???", numbers[i]);}
+            	if (numbers[i] == 10 ){printf(" %d│", numbers[i]);}
+            	else {printf(" %d │", numbers[i]);}
 
             }
 
-            else {printf("   ???");}
+            else {printf("   │");}
 
         }
 
@@ -73,12 +61,12 @@ int main() {
     }
 
     for (int i = 0; i < 1; i++) {
-        // ?????????�???????�?????????? ??????????
-        printf("???");
+        // Горизонтальные линии
+        printf("└");
         for (int j = 0; j < cols - 1; j++) {
-            printf("????????????");
+            printf("───┴");
         }
-        printf("????????????");
+        printf("───┘");
         printf("\n");
     }
 
