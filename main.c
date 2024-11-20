@@ -14,15 +14,15 @@ int main()
     const char *letters[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    //draw square
-    first_line(cols);
+    // draw square
+    line(cols, "Ú", "ÄÄÄÂ", "ÄÄÄ¿\n");
 
     first_vertical_line(cols, letters);
 
     for (int i = 0; i < rows; i++)
     {
-        
-        horizontal_line_field(cols);
+
+        line(cols, "Ã", "ÄÄÄÅ", "ÄÄÄ´\n");
         vertical_line_field(cols, numbers, i);
     }
 
@@ -33,88 +33,38 @@ int main()
 
 void last_line(int cols)
 {
-    printf("â””");
+    printf("À");
     for (int j = 0; j < cols - 1; j++)
     {
-        printf("â”€â”€â”€â”´");
+        printf("ÄÄÄÁ");
     }
-    printf("â”€â”€â”€â”˜");
-    printf("\n");
+    printf("ÄÄÄÙ\n");
 }
 
 void vertical_line_field(int cols, int numbers[10], int i)
 {
-    printf("â”‚");
-    for (int j = 0; j < cols; j++)
-    {
 
-        if (j < 1)
-        {
-            if (numbers[i] == 10)
-            {
-                printf(" %dâ”‚", numbers[i]);
-            }
-            else
-            {
-                printf(" %d â”‚", numbers[i]);
-            }
-        }
+    printf("³%2d ³", numbers[i]);
 
-        else
-        {
-            printf("   â”‚");
-        }
-    }
-
-    printf("\n");
-}
-
-void horizontal_line_field(int cols)
-{
-    printf("â”œ");
-    for (int j = 0; j < cols; j++)
-    {
-        if (j == cols - 1)
-        {
-            printf("â”€â”€â”€â”¤");
-        }
-        else
-        {
-            printf("â”€â”€â”€â”¼");
-        }
-    }
-    printf("\n");
+    line(cols, "", "   ³", "\n");
 }
 
 void first_vertical_line(int cols, const char *letters[10])
 {
-    printf("â”‚");
-    for (int j = 0; j < cols; j++)
-    {
-        if (j > 0)
-        {
-            printf(" %s â”‚", letters[j - 1]);
-        }
-        else
-        {
-            printf("   â”‚");
-        }
-    }
-    printf("\n");
-}
-
-void first_line(int cols)
-{
-    printf("â”Œ");
-    line(cols);
-    printf("â”€â”€â”€â”");
-    printf("\n");
-}
-
-void line(int cols)
-{
+    printf("³   ³");
     for (int j = 0; j < cols - 1; j++)
     {
-        printf("â”€â”€â”€â”¬");
+        printf(" %s ³", letters[j]);
     }
+    printf("\n");
+}
+
+void line(int cols, const char *start, const char *middle, const char *end)
+{
+    printf(start);
+    for (int j = 0; j < cols - 1; j++)
+    {
+        printf(middle);
+    }
+    printf(end);
 }

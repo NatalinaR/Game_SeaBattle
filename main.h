@@ -1,5 +1,5 @@
 #pragma once
-void line(int cols);
+void line(int cols, const char *start, const char *middle, const char *end);
 
 void first_line(int cols);
 
