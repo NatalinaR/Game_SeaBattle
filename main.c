@@ -1,74 +1,68 @@
 #include <stdio.h>
+#include "main.h"
+#include <stdarg.h>
 
-int main() {
-    int row_count = 7;
-    int col_count = 7;
+int main()
+{
+    const int cells = 10;
 
-    int rows = row_count; 
-    int cols = col_count + 1; 
+    int row_count = cells;
+    int col_count = cells + 1;
 
-    const char *letters[] = {"a","b","c","d","e","f","g","h","i","j"};
+    const char *letters[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    for (int i = 0; i < 1; i++) {
-        // Ð“Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð»Ð¸Ð½Ð¸Ð¸
-        printf("â”Œ");
-        for (int j = 0; j < cols - 1; j++) {
-            printf("â”€â”€â”€â”¬");
-        }
-        printf("â”€â”€â”€â”"); 
-        printf("\n");
+    // ƒ®à¨§®­â «ì­ë¥ «¨­¨¨
+    line(col_count, "Ú", "ÄÄÄÂ", ""ÄÄÄ¿"\n");
 
-        //Ð²ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ Ð»Ð¸Ð½Ð¸Ð¸
-        printf("â”‚");
-        for (int j = 0; j < cols; j++) {
-            if (j > 0) {
-                printf(" %s â”‚", letters[j-1]);
-            }
-            else {printf("   â”‚");}
+    //¢¥àâ¨ª «ì­ë¥ «¨­¨¨
+    printf("³   ³");
+    line2(col_count, letters);
+    printf("\n");
 
-        }
-        printf("\n");
+    for (int i = 0; i < row_count; i++)
+    {
+        // ƒ®à¨§®­â «ì­ë¥ «¨­¨¨
+        line(col_count, "Ã", "ÄÄÄÅ", "ÄÄÄ´\n");
 
+        // ‚¥àâ¨ª «ì­ë¥ à §¤¥«¨â¥«¨
+        printf("|%2d |", numbers[i]);
 
+        line(col_count, "", "   |", "\n");
     }
-
-    for (int i = 0; i < rows; i++) {
-        // Ð“Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð»Ð¸Ð½Ð¸Ð¸
-        printf("â”œ");
-        for (int j = 0; j < cols; j++) {
-            if (j == cols - 1) {printf("â”€â”€â”€â”¤");}
-            else {printf("â”€â”€â”€â”¼");}
-        }
-        printf("\n");
-
-        // Ð’ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ Ñ€Ð°Ð·Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»Ð¸
-        printf("â”‚");
-        for (int j = 0; j < cols; j++) {
-
-            if (j < 1)
-            {
-            	if (numbers[i] == 10 ){printf(" %dâ”‚", numbers[i]);}
-            	else {printf(" %d â”‚", numbers[i]);}
-
-            }
-
-            else {printf("   â”‚");}
-
-        }
-
-        printf("\n");
-    }
-
-    for (int i = 0; i < 1; i++) {
-        // Ð“Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð»Ð¸Ð½Ð¸Ð¸
-        printf("â””");
-        for (int j = 0; j < cols - 1; j++) {
-            printf("â”€â”€â”€â”´");
-        }
-        printf("â”€â”€â”€â”˜");
-        printf("\n");
-    }
+                     
+    // ƒ®à¨§®­â «ì­ë¥ «¨­¨¨
+    line(col_count, "À", "ÄÄÄÁ", "ÄÄÄÁ\n");
 
     return 0;
+}
+
+char *bprintf(char *fmt, ...)
+{
+    static char buffer[10];
+	va_list ap = NULL;
+
+	va_start( ap, fmt );
+
+    vsnprintf( buffer, sizeof(buffer), fmt, ap );
+    
+    return buffer;
+}
+
+void line2(int cols, const char *letters[10])
+{
+    for (int j = 0; j < cols - 1; j++)
+    {
+        printf(" %s |", letters[j]);
+    }
+}
+
+void line(int cols, const char *start, const char *chars, const char *end)
+{
+    printf(start);
+    for (int j = 0; j < cols - 1; j++)
+    {
+        printf(chars);
+    }
+    printf(end);
 }
