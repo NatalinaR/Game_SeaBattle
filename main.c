@@ -13,7 +13,7 @@ int main()
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     // Горизонтальные линии
-    line(col_count, "┌", "───┬", ""───┐"\n");
+    line(col_count, "┌", "───┬", "───┐\n");
 
     //вертикальные линии
     printf("│   │");
@@ -26,9 +26,9 @@ int main()
         line(col_count, "├", "───┼", "───┤\n");
 
         // Вертикальные разделители
-        printf("|%2d |", numbers[i]);
+        printf("│%2d │", numbers[i]);
 
-        line(col_count, "", "   |", "\n");
+        line(col_count, "", "   │", "\n");
     }
                      
     // Горизонтальные линии
@@ -53,7 +53,7 @@ void line2(int cols, const char *letters[10])
 {
     for (int j = 0; j < cols - 1; j++)
     {
-        printf(" %s |", letters[j]);
+        printf(" %s │", letters[j]);
     }
 }
 
