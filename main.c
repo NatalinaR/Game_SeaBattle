@@ -1,84 +1,137 @@
 #include <stdio.h>
-#include <locale.h>
 #include "main.h"
+#include <stdarg.h>
+#include <ctype.h>
 
 int main()
 {
 
-    int row_count = 10;
-    int col_count = 10;
+    int ship = 10;
+
+
+    const int cells = 10;
     char s;
 
-    int rows = row_count;
-    int cols = col_count + 1;
+    int rows = cells;
+    int cols = cells + 1;
 
-    const char *letters[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    // draw square
-    line(cols, "Ú", "ÄÄÄÂ", "ÄÄÄ¿\n");
-
-    first_vertical_line(cols, letters);
-
-    for (int i = 0; i < rows; i++)
+    while (ship > 0)
     {
+        // draw square
+        line(cols, "Ú", "ÄÄÄÂ", NULL, "ÄÄÄ¿", 0);
+        line(cols, "Ú", "ÄÄÄÂ", NULL, "ÄÄÄ¿", 3);
 
-        line(cols, "Ã", "ÄÄÄÅ", "ÄÄÄ´\n");
-        vertical_line_field(cols, numbers, i);
+        line(cols, "³   ³", NULL, row_header, "", 0);
+        line(cols, "³   ³", NULL, row_header, "", 3);
+
+        for (int i = 0; i < rows; i++)
+        {
+
+            line(cols, "Ã", "ÄÄÄÅ", NULL, "ÄÄÄ´", 0);
+            line(cols, "Ã", "ÄÄÄÅ", NULL, "ÄÄÄ´", 3);
+            line(cols, bprintf("³%2d ³", numbers[i]), "   ³", NULL, "", 0);
+            line(cols, bprintf("³%2d ³", numbers[i]), "   ³", NULL, "", 3);
+        }
+
+        line(cols, "À", "ÄÄÄÁ", NULL, "ÄÄÄÙ", 0);
+        line(cols, "À", "ÄÄÄÁ", NULL, "ÄÄÄÙ", 3);
+
+        process_input(&ship);
+
     }
 
-    last_line(cols);
-    printf("487");
-    scanf("%c", &s);
+    printf("‚á¥ ª®à ¡«¨ ¯®â®¯«¥­ë!\n");
+    scanf("%s", &s);
     return 0;
-}
 
-void last_line(int cols)
-{
-    printf("À");
-    for (int j = 0; j < cols - 1; j++)
-    {
-        printf("ÄÄÄÁ");
-    }
-    printf("ÄÄÄÙ\n");
-}
-
-void vertical_line_field(int cols, int numbers[10], int i)
-{
-
-    printf("³%2d ³", numbers[i]);
-
-    line(cols, "", "   ³", "\n");
-}
-
-void first_vertical_line(int cols, const char *letters[10])
-{
-    printf("³   ³");
-    for (int j = 0; j < cols - 1; j++)
-    {
-        printf(" %s ³", letters[j]);
-    }
-    printf("\n");
 }
 
 char *bprintf(char *fmt, ...)
 {
     static char buffer[10];
-        va_list ap=NULL;
+    va_list ap = NULL;
 
-        va_start(ap, fmt);
+    va_start(ap, fmt);
     vsnprintf(buffer, sizeof(buffer), fmt, ap);
-
     return buffer;
-
 }
 
-void line(int cols, const char *start, const char *middle, const char *end)
+void line(int cols, const char *start, const char *middle, void(chars(int i)), const char *end, int offset)
 {
-    printf("%s", start);
+    printf("%*s%s", offset, "", start);
     for (int j = 0; j < cols - 1; j++)
     {
-        printf("%s", middle);
+        if (NULL != middle)
+            printf("%s", middle);
+        if (NULL != chars)
+            chars(j);
     }
-    printf("%s", end);
+
+    printf("%s%s", end, offset != 0 ? "\n" : "");
+}
+
+void row_header(int j)
+{
+    const char *letters[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+    printf(" %s ³", letters[j]);
+}
+
+void get_coordinates(const char *input, int *row, int *col)
+{
+    if (input == NULL || input[0] == '\0' || input[1] == '\0')
+    {
+        printf("¥ª®àà¥ªâ­ë© ¢¢®¤!\n");
+        *row = -1;
+        *col = -1;
+        return;
+    }
+
+    char letter = tolower(input[0]);
+    if (letter >= 'a' && letter <= 'j')
+    {
+        *col = letter - 'a';
+    }
+    else
+    {
+        printf("¥ª®àà¥ªâ­ë© áâ®«¡¥æ!\n");
+        *row = -1;
+        *col = -1;
+        return;
+    }
+
+    int number;
+    if (sscanf(&input[1], "%d", &number) == 1 && number >= 0 && number <= 10)
+    {
+        *row = number;
+    }
+    else
+    {
+        printf("¥ª®àà¥ªâ­ ï áâà®ª !\n");
+        *row = -1;
+        *col = -1;
+    }
+}
+
+void process_input(int *ship_count)
+{
+    char input[10];
+    int row, col;
+
+    printf("‚¢¥¤¨â¥ ª®®à¤¨­ âë (­ ¯à¨¬¥à, A2 ¨«¨ J10): ");
+    scanf("%s", input);
+
+    get_coordinates(input, &row, &col);
+
+    if (row != -1 && col != -1)
+    {
+        printf("‚ë ¢ë¡à «¨ áâà®ªã %d ¨ áâ®«¡¥æ %d\n", row, col);
+        (*ship_count)--;
+        printf("áâ «®áì ª®à ¡«¥©: %d\n", *ship_count);
+    }
+    else
+    {
+        printf("è¨¡ª  ¢ ¢¢®¤¥ ª®®à¤¨­ â!\n");
+    }
 }
