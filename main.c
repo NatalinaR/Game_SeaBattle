@@ -7,6 +7,7 @@ int main()
 
     int row_count = 10;
     int col_count = 10;
+    char s;
 
     int rows = row_count;
     int cols = col_count + 1;
@@ -27,7 +28,8 @@ int main()
     }
 
     last_line(cols);
-
+    printf("487");
+    scanf("%c", &s);
     return 0;
 }
 
@@ -59,12 +61,24 @@ void first_vertical_line(int cols, const char *letters[10])
     printf("\n");
 }
 
+char *bprintf(char *fmt, ...)
+{
+    static char buffer[10];
+        va_list ap=NULL;
+
+        va_start(ap, fmt);
+    vsnprintf(buffer, sizeof(buffer), fmt, ap);
+
+    return buffer;
+
+}
+
 void line(int cols, const char *start, const char *middle, const char *end)
 {
-    printf(start);
+    printf("%s", start);
     for (int j = 0; j < cols - 1; j++)
     {
-        printf(middle);
+        printf("%s", middle);
     }
-    printf(end);
+    printf("%s", end);
 }
