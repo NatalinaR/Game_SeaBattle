@@ -24,7 +24,7 @@ void initialize_grid()
 
 int main()
 {
-    initialize_grid(); // Инициализация матрицы
+    initialize_grid(); // matrix initialisation
 
     // add_ship(0, 0, 2, 2);
     const int cells = 10;
@@ -37,10 +37,10 @@ int main()
     // int current_player = ask_player_number();
     // printf("Выбран игрок %d\n", current_player);
     // place_all_ships(current_player);
-    printf("Игрок 1, расставьте свои корабли:\n");
+    printf("Player 1, place your ship:\n");
     place_all_ships(1);
 
-    printf("Игрок 2, расставьте свои корабли:\n");
+    printf("Player 2, place your shi:\n");
     place_all_ships(2);
 
     // draw square
@@ -49,7 +49,7 @@ int main()
 
     game_loop(cols, rows, numbers);
 
-    printf("Все корабли потоплены!\n");
+    printf("No Ships Left!\n");
     scanf("%s", &s);
     return 0;
 }
@@ -88,7 +88,7 @@ void get_coordinates(const char *input, int *row, int *col)
 {
     if (input == NULL || input[0] == '\0' || input[1] == '\0')
     {
-        printf("Некорректный ввод!\n");
+        printf("Wrong!\n");
         *row = -1;
         *col = -1;
         return;
@@ -101,7 +101,7 @@ void get_coordinates(const char *input, int *row, int *col)
     }
     else
     {
-        printf("Некорректный столбец!\n");
+        printf("WrongCol!\n");
         *row = -1;
         *col = -1;
         return;
@@ -114,7 +114,7 @@ void get_coordinates(const char *input, int *row, int *col)
     }
     else
     {
-        printf("Некорректная строка!\n");
+        printf("WrongRow!\n");
         *row = -1;
         *col = -1;
     }
@@ -130,37 +130,45 @@ void process_input(int *ship_count, int main_player)
     // int current_player = ask_player_number();
     // printf("Выбран игрок %d\n", current_player);
     // place_all_ships(current_player);
-
-    printf("Введите координаты для атаки (например, A2 или J10): ");
-    scanf("%s", input);
-    get_coordinates(input, &row, &col);
-
-    if (is_cell_chosen(row - 1, col - 1, enemy))
+    while (1)
     {
-        printf("Клетка %d,%d уже была выбрана, выберите другую\n", row, col);
-        printf("Введите координаты для атаки (например, A2 или J10): ");
+
+        printf("Attack (e.g., A2 or J10): ");
         scanf("%s", input);
         get_coordinates(input, &row, &col);
-    };
 
-    if (row != -1 && col != -1)
-    {
-        if (is_cell_occupied(row - 1, col - 1, enemy)) 
+        // Check for valid coordinates
+        if (row == -1 || col == -1)
+        {
+            printf("Error in coordinates input!\n");
+            continue;
+        }
+
+        // Check if already chosen
+        if (is_cell_chosen(row - 1, col - 1, enemy))
+        {
+            printf("Cell %d,%d already has been chosen, pick another one\n", row, col);
+            continue;
+        }
+
+        // If occupied (hit)
+        if (is_cell_occupied(row - 1, col - 1, enemy))
         {
             add_marker(row - 1, col - 1, enemy);
-            printf("ПОПАЛ\n");
+            printf("HIT!\n");
             (*ship_count)--;
-            printf("Осталось кораблей: %d\n", *ship_count);
+            printf("Ships left: %d\n", *ship_count);
+
+            // Allow another shot if it was a hit
+            if (*ship_count == 0)
+                break;
         }
         else
         {
             add_miss(row - 1, col - 1, enemy);
-            printf("МИМО\n");
+            printf("MISS.\n");
+            break; // Exit loop on miss
         }
-    }
-    else
-    {
-        printf("Ошибка в вводе координат!\n");
     }
 }
 
@@ -173,7 +181,7 @@ bool add_ship(int j, int i, int player)
     // Проверка допустимости индексов и игрока
     if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
     {
-        printf("Некорректные параметры для добавления маркера!\n");
+        printf("Wrong marker parameters!\n");
         return false;
     }
 
@@ -190,7 +198,7 @@ bool add_marker(int j, int i, int player)
     // Проверка допустимости индексов и игрока
     if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
     {
-        printf("Некорректные параметры для добавления маркера!\n");
+        printf("Wrong marker parameters!\n");
         return false;
     }
     grid_destryed_ships[offset / 3][i][j] = 'D';
@@ -205,7 +213,7 @@ bool add_miss(int j, int i, int player)
     // Проверка допустимости индексов и игрока
     if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
     {
-        printf("Некорректные параметры для добавления маркера!\n");
+        printf("Wrong marker parameters!\n");
         return false;
     }
     grid_chosen_cells[offset / 3][i][j] = '+';
@@ -221,7 +229,7 @@ bool is_cell_occupied(int j, int i, int player)
     // Проверка допустимости индексов
     if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
     {
-        printf("Некорректные параметры для проверки клетки!\n");
+        printf("Wrong marker parameters!\n");
         return false;
     }
 
@@ -237,7 +245,7 @@ bool is_cell_chosen(int j, int i, int player)
     // Проверка допустимости индексов
     if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
     {
-        printf("Некорректные параметры для проверки клетки!\n");
+        printf("Wrong marker parameters!\n");
         return false;
     }
 
@@ -295,6 +303,28 @@ void line_with_markers(int cols, const char *start, const char *middle, void(cha
             if (NULL != chars)
                 chars(j);
         }
+        else if (player_index == 0)
+        {
+            if (grid_visible[offset / 3][j][row] == 'K' && grid_destryed_ships[offset / 3][j][row] == 'D')
+            {
+                printf(" D │");
+            }
+            else if (grid_visible[offset / 3][j][row] == 'K' && grid_destryed_ships[offset / 3][j][row] != 'D')
+            {
+                printf(" K │");
+            }
+            else if (grid_chosen_cells[offset / 3][j][row] == '+')
+            {
+
+                printf(" + │");
+            }
+            else
+            {
+                printf("   │");
+            }
+            if (NULL != chars)
+                chars(j);
+        }
         else
         {
             if (grid_visible[offset / 3][j][row] == 'K' && grid_destryed_ships[offset / 3][j][row] == 'D')
@@ -324,11 +354,11 @@ void place_all_ships(int player)
     int row, col;
     // int board_owner = player;
 
-    printf("=== Расстановка кораблей для игрока %d ===\n", player);
+    printf("=== РPlacing ships for player %d ===\n", player);
 
     for (int i = 0; i < ships_to_place;)
     {
-        printf("Добавьте корабль #%d (например, A2 или J10): ", i + 1);
+        printf("Place a ship #%d (e.g, A2 or J10): ", i + 1);
         scanf("%s", input);
         get_coordinates(input, &row, &col);
 
@@ -336,21 +366,21 @@ void place_all_ships(int player)
         {
             if (add_ship(row - 1, col - 1, player)) // unified function
             {
-                printf("Корабль #%d установлен в %s\n", i + 1, input);
+                printf("Ship #%d placed to %s\n", i + 1, input);
                 i++; // only increment if successful
             }
             else
             {
-                printf("Ошибка при установке корабля! Повторите ввод.\n");
+                printf("Wrong data. Repeat again!\n");
             }
         }
         else
         {
-            printf("Ошибка в координатах! Повторите ввод.\n");
+            printf("Wrong coordinates. Repeat again!\n");
         }
     }
 
-    printf("Все %d кораблей установлены для игрока %d.\n", ships_to_place, player);
+    printf("All %d ships have been placed for plazer %d.\n", ships_to_place, player);
 }
 
 int ask_player_number()
@@ -359,12 +389,12 @@ int ask_player_number()
 
     do
     {
-        printf("Вы игрок 1 или 2? Введите 1 или 2: ");
+        printf("Are you player 1 or 2? Enter 1 or 2: ");
         scanf("%d", &player);
 
         if (player != 1 && player != 2)
         {
-            printf("Некорректный номер игрока! Попробуйте снова.\n");
+            printf("Please repeat again\n");
         }
     } while (player != 1 && player != 2);
 
@@ -378,23 +408,25 @@ void game_loop(int cols, int rows, const int *numbers)
 
     while (ships_player1 > 0 && ships_player2 > 0)
     {
-        printf("\n===== ХОД ИГРОКА 1 =====\n");
+        printf("\n===== TURN PLAYER 1 =====\n");
         draw_boards(cols, rows, numbers, 1);
         process_input(&ships_player2, 1); // Игрок 1 атакует игрока 2
 
         if (ships_player2 == 0)
         {
-            printf("Игрок 1 победил!\n");
+            printf("Player 1 won!\n");
+            draw_boards(cols, rows, numbers, 0);
             break;
         }
 
-        printf("\n===== ХОД ИГРОКА 2 =====\n");
+        printf("\n===== TURN PLAYER 2 =====\n");
         draw_boards(cols, rows, numbers, 2);
         process_input(&ships_player1, 2); // Игрок 2 атакует игрока 1
 
         if (ships_player1 == 0)
         {
-            printf("Игрок 2 победил!\n");
+            printf("Player 2 won!\n");
+            draw_boards(cols, rows, numbers, 0);
             break;
         }
     }
