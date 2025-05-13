@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "main.h"
 #include <stdarg.h>
 #include <ctype.h>
@@ -40,7 +42,7 @@ int main()
     printf("Player 1, place your ship:\n");
     place_all_ships(1);
 
-    printf("Player 2, place your shi:\n");
+    printf("Player 2, place your ship:\n");
     place_all_ships(2);
 
     // draw square
@@ -381,6 +383,8 @@ void place_all_ships(int player)
     }
 
     printf("All %d ships have been placed for plazer %d.\n", ships_to_place, player);
+    getchar();
+    system("cls");
 }
 
 int ask_player_number()
@@ -419,6 +423,7 @@ void game_loop(int cols, int rows, const int *numbers)
             break;
         }
 
+        system("cls");
         printf("\n===== TURN PLAYER 2 =====\n");
         draw_boards(cols, rows, numbers, 2);
         process_input(&ships_player1, 2); // Игрок 2 атакует игрока 1
@@ -429,6 +434,7 @@ void game_loop(int cols, int rows, const int *numbers)
             draw_boards(cols, rows, numbers, 0);
             break;
         }
+        system("cls");
     }
 }
 
