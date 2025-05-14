@@ -17,6 +17,8 @@ void game_loop(int cols, int rows, const int *numbers);
 bool check_cell(int j, int i, int player, char type);
 bool add_marker(int j, int i, int player, char purpose);
 
+void setup_game_settings(int *rows, int *cols, int *ship_count);
+
 
 
 

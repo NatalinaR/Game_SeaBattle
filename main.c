@@ -6,16 +6,16 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define MAX_ROWS 5
-#define MAX_COLS 5
-#define SHIPS_NUMBER 2
-
 #define SHIP_CHARACTER '€'
 #define MISS_CHARACTER '+'
 #define DESTROYED_SHIP_CHARACTER '∞'
 
 // matrix to save markers
-char grid_visible[2][MAX_COLS][MAX_ROWS];
+char grid_visible[2][10][10];
+
+int max_rows = 5;
+int max_cols = 5;
+int ships_number = 5;
 
 #pragma region Main
 void initialize_grid()
@@ -31,8 +31,8 @@ int main()
     do
     {
         initialize_grid();
-        int rows = MAX_ROWS;
-        int cols = MAX_COLS + 1;
+        setup_game_settings(&max_rows, &max_cols, &ships_number);
+
         const int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
         printf("Player 1, place your ship:\n");
@@ -41,7 +41,7 @@ int main()
         printf("Player 2, place your ship:\n");
         place_all_ships(2);
 
-        game_loop(cols, rows, numbers);
+        game_loop(max_cols + 1, max_rows, numbers);
 
         printf("Good GAME!\n");
 
@@ -131,13 +131,13 @@ void draw_boards(int cols, int rows, const int *numbers, int player_index)
 
     line(cols, "≥   ≥", NULL, row_header, "", 0);
     line(cols, "≥   ≥", NULL, row_header, "", 3);
-    
+
     for (int i = 0; i < rows; i++)
     {
 
         line(cols, "√", "ƒƒƒ≈", NULL, "ƒƒƒ¥", 0);
         line(cols, "√", "ƒƒƒ≈", NULL, "ƒƒƒ¥", 3);
-        
+
         line_with_markers(cols, bprintf("≥%2d ≥", numbers[i]), "   ≥", NULL, "", 0, i, player_index);
         line_with_markers(cols, bprintf("≥%2d ≥", numbers[i]), "   ≥", NULL, "", 3, i, player_index);
     }
@@ -206,6 +206,13 @@ void process_input(int *ship_count, int main_player, const int *numbers)
             continue;
         }
 
+        //Bounds check
+        if (row < 1 || row > max_rows || col < 1 || col > max_cols)
+        {
+            printf("Coordinates are out of bounds! Grid is %dx%d.\n", max_rows, max_cols);
+            continue;
+        }
+
         // Check if already chosen
         if (check_cell(row - 1, col - 1, enemy, 'C'))
         {
@@ -218,8 +225,7 @@ void process_input(int *ship_count, int main_player, const int *numbers)
         {
             system("cls");
             add_marker(row - 1, col - 1, enemy, DESTROYED_SHIP_CHARACTER);
-            draw_boards(MAX_COLS + 1, MAX_ROWS, numbers, main_player);
-
+            draw_boards(max_cols + 1, max_rows, numbers, main_player);
 
             printf("HIT!\n");
             (*ship_count)--;
@@ -233,7 +239,7 @@ void process_input(int *ship_count, int main_player, const int *numbers)
         {
             system("cls");
             add_marker(row - 1, col - 1, enemy, MISS_CHARACTER);
-            draw_boards(MAX_COLS + 1, MAX_ROWS, numbers, main_player);
+            draw_boards(max_cols + 1, max_rows, numbers, main_player);
             printf("MISS.\n");
             break;
         }
@@ -244,7 +250,7 @@ void process_input(int *ship_count, int main_player, const int *numbers)
 #pragma region GameLogic
 void place_all_ships(int player)
 {
-    int ships_to_place = SHIPS_NUMBER;
+    int ships_to_place = ships_number;
     char input[10];
     int row, col;
 
@@ -284,8 +290,8 @@ void place_all_ships(int player)
 
 void game_loop(int cols, int rows, const int *numbers)
 {
-    int ships_player1 = SHIPS_NUMBER;
-    int ships_player2 = SHIPS_NUMBER;
+    int ships_player1 = ships_number;
+    int ships_player2 = ships_number;
 
     while (ships_player1 > 0 && ships_player2 > 0)
     {
@@ -293,7 +299,6 @@ void game_loop(int cols, int rows, const int *numbers)
 
         draw_boards(cols, rows, numbers, 1);
 
-       
         process_input(&ships_player2, 1, numbers); // player 1 attack player 2
 
         if (ships_player2 == 0)
@@ -331,7 +336,7 @@ bool add_marker(int j, int i, int player, char purpose)
     int offset = player == 1 ? 0 : 3;
 
     // è‡Æ¢•‡™† §ÆØ„·‚®¨Æ·‚® ®≠§•™·Æ¢ ® ®£‡Æ™†
-    if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
+    if (j < 0 || j >= max_cols || i < 0 || i >= max_rows || (player != 1 && player != 2))
     {
         printf("Wrong marker parameters!\n");
         return false;
@@ -363,7 +368,7 @@ bool check_cell(int j, int i, int player, char type)
 {
     int offset = player == 1 ? 0 : 3;
 
-    if (j < 0 || j >= MAX_COLS || i < 0 || i >= MAX_ROWS || (player != 1 && player != 2))
+    if (j < 0 || j >= max_cols || i < 0 || i >= max_rows || (player != 1 && player != 2))
     {
         printf("Wrong marker parameters!\n");
         return false;
@@ -384,3 +389,43 @@ bool check_cell(int j, int i, int player, char type)
 }
 
 #pragma endregion
+
+void setup_game_settings(int *rows, int *cols, int *ship_count)
+{
+    char choice;
+
+    printf("Do you want to use default game settings? (y/n): ");
+    scanf(" %c", &choice);
+    choice = tolower(choice);
+
+    if (choice == 'y')
+    {
+        *rows = max_rows;
+        *cols = max_cols;
+
+        printf("Using default settings: %dx%d board, %d ships per player.\n", *rows, *cols, *ship_count);
+    }
+    else
+    {
+        printf("Enter number of cell (max 10): ");
+        scanf("%d", rows);
+        cols = rows;
+
+        // Optional: validation
+        if (*rows <= 0 || *cols <= 0 || *rows > 10 || *cols > 10)
+        {
+            printf("Invalid size. Setting default values.\n");
+            *rows = max_rows;
+            *cols = max_cols;
+        }
+
+        *ship_count = (*rows * *cols) / 5;
+        if (*ship_count == 0)
+            *ship_count = 1; // Minimum one ship
+        // printf("Board size set to %dx%d. Ships per player: %d.\n", *rows, *cols, *ship_count);
+
+        max_rows = *rows;
+        max_cols = *cols;
+        ships_number = *ship_count;
+    }
+}
