@@ -149,40 +149,45 @@ void draw_boards(int cols, int rows, const int *numbers, int player_index)
 #pragma endregion
 
 #pragma region Input
+
 void get_coordinates(const char *input, int *row, int *col)
 {
-    if (input == NULL || input[0] == '\0' || input[1] == '\0')
+    if (input == NULL || strlen(input) < 2 || strlen(input) > 3)
     {
-        printf("Wrong!\n");
+        printf("Invalid input format! Use format like A2.\n");
         *row = -1;
         *col = -1;
         return;
     }
 
+    // Convert first character to lowercase
     char letter = tolower(input[0]);
-    if (letter >= 'a' && letter <= 'j')
+
+    // Validate column letter
+    if (letter < 'a' || letter > 'j')
     {
-        *col = letter - 'a' + 1;
-    }
-    else
-    {
-        printf("WrongCol!\n");
+        printf("Invalid column letter! Must be A-J.\n");
         *row = -1;
         *col = -1;
         return;
     }
 
+    // Convert letter to 0-based column index
+    int j = letter - 'a';
+
+    // Parse row number (starting from index 1)
     int number;
-    if (sscanf(&input[1], "%d", &number) >= 1 && number <= 10)
+    if (sscanf(&input[1], "%d", &number) != 1 || number < 1 || number > max_rows)
     {
-        *row = number;
-    }
-    else
-    {
-        printf("WrongRow!\n");
+        printf("Invalid row number! Must be between 1 and %d.\n", max_rows);
         *row = -1;
         *col = -1;
+        return;
     }
+
+    // Success ? set row and col
+    *row = number;
+    *col = j + 1;
 }
 
 void process_input(int *ship_count, int main_player, const int *numbers)
@@ -194,7 +199,6 @@ void process_input(int *ship_count, int main_player, const int *numbers)
 
     while (1)
     {
-
         printf("Attack (e.g., A2): ");
         scanf("%s", input);
         get_coordinates(input, &row, &col);
@@ -258,30 +262,28 @@ void place_all_ships(int player)
 
     for (int i = 0; i < ships_to_place;)
     {
-        printf("Place a ship #%d (e.g, A2): ", i + 1);
+        printf("Place a ship #%d (e.g., A2): ", i + 1);
         scanf("%s", input);
         get_coordinates(input, &row, &col);
 
-        if (row != -1 && col != -1)
+        if (check_cell(row - 1, col - 1, player, SHIP_CHARACTER))
+        {
+            printf("Cell already occupied or used. Pick another one.\n");
+        }
+        else
         {
             if (add_marker(row - 1, col - 1, player, SHIP_CHARACTER))
             {
-                // printf("Ship #%d placed to %s\n", i + 1, input);
                 i++;
             }
             else
             {
-                printf("Wrong data. Repeat again!\n");
+                printf("Error placing ship. Try again.\n");
             }
-        }
-        else
-        {
-            printf("Wrong coordinates. Repeat again!\n");
         }
     }
 
     printf("All %d ships have been placed for player %d.\n", ships_to_place, player);
-
     printf("\n===== Game LOADING =====\n");
 
     Sleep(1000);
@@ -331,29 +333,29 @@ void game_loop(int cols, int rows, const int *numbers)
 #pragma endregion
 
 #pragma region GridHelpers
-bool add_marker(int j, int i, int player, char purpose)
+bool add_marker(int j, int i, int player, char purpose) // rows and cols
 {
     int offset = player == 1 ? 0 : 3;
 
     // Проверка допустимости индексов и игрока
-    if (j < 0 || j >= max_cols || i < 0 || i >= max_rows || (player != 1 && player != 2))
+    if (i < 0 || i >= max_cols || j < 0 || j >= max_rows || (player != 1 && player != 2))
     {
-        printf("Wrong marker parameters!\n");
+        // printf("Wrong marker parameters!\n");
         return false;
     }
 
     switch (purpose)
     {
     case SHIP_CHARACTER:
-        grid_visible[offset / 3][i][j] = SHIP_CHARACTER;
+        grid_visible[offset / 3][j][i] = SHIP_CHARACTER;
         break;
 
     case DESTROYED_SHIP_CHARACTER:
-        grid_visible[offset / 3][i][j] = DESTROYED_SHIP_CHARACTER;
+        grid_visible[offset / 3][j][i] = DESTROYED_SHIP_CHARACTER;
         break;
 
     case MISS_CHARACTER:
-        grid_visible[offset / 3][i][j] = MISS_CHARACTER;
+        grid_visible[offset / 3][j][i] = MISS_CHARACTER;
         break;
 
     default:
@@ -364,17 +366,17 @@ bool add_marker(int j, int i, int player, char purpose)
     return true;
 }
 
-bool check_cell(int j, int i, int player, char type)
+bool check_cell(int j, int i, int player, char type) // rows and cols
 {
     int offset = player == 1 ? 0 : 3;
 
-    if (j < 0 || j >= max_cols || i < 0 || i >= max_rows || (player != 1 && player != 2))
+    if (i < 0 || i >= max_cols || j < 0 || j >= max_rows || (player != 1 && player != 2))
     {
-        printf("Wrong marker parameters!\n");
+        // printf("Wrong marker parameters!\n");
         return false;
     }
 
-    char cell = grid_visible[offset / 3][i][j];
+    char cell = grid_visible[offset / 3][j][i];
 
     switch (type)
     {
@@ -388,8 +390,6 @@ bool check_cell(int j, int i, int player, char type)
     }
 }
 
-#pragma endregion
-
 void setup_game_settings(int *rows, int *cols, int *ship_count)
 {
     char choice;
@@ -398,7 +398,8 @@ void setup_game_settings(int *rows, int *cols, int *ship_count)
     printf("Do you want to use default game settings? (y/n): ");
     scanf(" %c", &choice);
     choice = tolower(choice);
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
 
     if (choice == 'y')
     {
@@ -453,3 +454,4 @@ void setup_game_settings(int *rows, int *cols, int *ship_count)
         ships_number = *ship_count;
     }
 }
+#pragma endregion

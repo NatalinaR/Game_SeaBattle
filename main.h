@@ -10,6 +10,7 @@ void line_with_markers(int cols, const char *start, const char *middle, void(cha
 
 void place_all_ships(int player);
 void get_coordinates(const char *input, int *row, int *col);
+// void get_coordinates(const char *input, int *row, int *col, int player);
 
 void process_input(int *ship_count, int board_owner, const int *numbers);
 void game_loop(int cols, int rows, const int *numbers);
