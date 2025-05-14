@@ -9,7 +9,7 @@
 
 #define MAX_ROWS 10
 #define MAX_COLS 10
-#define SHIPS_NUMBER 3
+#define SHIPS_NUMBER 5
 
 // Глобальная матрица для хранения маркеров
 char grid_destryed_ships[2][MAX_COLS][MAX_ROWS];
