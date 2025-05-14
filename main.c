@@ -206,7 +206,7 @@ void process_input(int *ship_count, int main_player, const int *numbers)
             continue;
         }
 
-        //Bounds check
+        // Bounds check
         if (row < 1 || row > max_rows || col < 1 || col > max_cols)
         {
             printf("Coordinates are out of bounds! Grid is %dx%d.\n", max_rows, max_cols);
@@ -254,7 +254,7 @@ void place_all_ships(int player)
     char input[10];
     int row, col;
 
-    printf("=== êlacing ships for player %d ===\n", player);
+    printf("=== Placing ships for player %d ===\n", player);
 
     for (int i = 0; i < ships_to_place;)
     {
@@ -393,10 +393,12 @@ bool check_cell(int j, int i, int player, char type)
 void setup_game_settings(int *rows, int *cols, int *ship_count)
 {
     char choice;
+    char buffer[100];
 
     printf("Do you want to use default game settings? (y/n): ");
     scanf(" %c", &choice);
     choice = tolower(choice);
+    while (getchar() != '\n');
 
     if (choice == 'y')
     {
@@ -407,9 +409,31 @@ void setup_game_settings(int *rows, int *cols, int *ship_count)
     }
     else
     {
-        printf("Enter number of cell (max 10): ");
-        scanf("%d", rows);
-        cols = rows;
+        int valid_input = 0;
+        while (!valid_input)
+        {
+            printf("Enter number of cells (1 to 10): ");
+            fgets(buffer, sizeof(buffer), stdin);
+
+            // Try to extract one integer from the input
+            if (sscanf(buffer, "%d", rows) == 1)
+            {
+                if (*rows >= 1 && *rows <= 10)
+                {
+                    valid_input = 1;
+                }
+                else
+                {
+                    printf("Invalid input! Please enter a number between 1 and 10.\n");
+                }
+            }
+            else
+            {
+                printf("Invalid input! Please enter a valid number.\n");
+            }
+        }
+
+        *cols = *rows;
 
         // Optional: validation
         if (*rows <= 0 || *cols <= 0 || *rows > 10 || *cols > 10)
